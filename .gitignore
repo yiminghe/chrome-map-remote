@@ -1,0 +1,10 @@
+node_modules
+.vscode
+*.code-workspace
+yarn.lock
+.idea
+*.log
+node_modules
+*.zip
+*.crx
+.DS_Store

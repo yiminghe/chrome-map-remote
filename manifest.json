@@ -1,0 +1,18 @@
+{
+  "name": "MapRemote",
+  "version": "0.1",
+  "description": "chrome extension version of proxy map remote",
+  "devtools_page": "devtools/devtools.html",
+  "icons": { "16": "icons/favicon16x16.png",
+    "32": "icons/favicon32x32.png",
+    "64": "icons/favicon64x64.png",
+   "128": "icons/favicon128x128.png" },
+  "permissions": [
+    "debugger",
+    "storage",
+    "activeTab",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "manifest_version": 2
+}
