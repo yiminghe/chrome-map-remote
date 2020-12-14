@@ -13,22 +13,24 @@ function setRedirects(remotes) {
 function add() {
   var $from = $('#from');
   var $to = $('#to');
-  if ($from.val() == '') {
+  const fromVal = $from.val().trim();
+  const toVal = $to.val().trim();
+  if (fromVal == '') {
     alert('Enter a from url pattern', 'error');
     return;
   }
-  if ($to.val() == '') {
+  if (toVal == '') {
     alert('Enter a to url pattern', 'error');
     return;
   }
   try {
-    new RegExp($from.val());
+    new RegExp(fromVal);
   } catch (err) {
     alert('Error: ' + err, 'error');
     return;
   }
   getRemotes((remotes) => {
-    remotes.push([$from.val(), $to.val()]);
+    remotes.push([fromVal, toVal]);
     setRedirects(remotes);
     $from.val('');
     $to.val('');
@@ -57,8 +59,8 @@ function editHolder(fromInput, toInput) {
         storageUpdate();
         return;
       }
-      remotes[this.value][0] = fromInput.val();
-      remotes[this.value][1] = toInput.val();
+      remotes[this.value][0] = fromInput.val().trim();
+      remotes[this.value][1] = toInput.val().trim();
       setRedirects(remotes);
       alert('MapRemote edited.');
     });
