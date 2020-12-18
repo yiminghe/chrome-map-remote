@@ -1,5 +1,5 @@
 # chrome-map-remote
-Chrome devtools extension of map remote like charles.
+A chrome extension providing map remote functionality like charles
 
 - Open devtools, navigate to "Map Remote" tab 
 - Click "Add" button to add from and to.
