@@ -46,7 +46,7 @@ function add() {
 
 function remove(e) {
   const id = parseInt(e.currentTarget.value);
-  modifyRemotes(() => {
+  modifyRemotes((remotes) => {
     remotes.splice(id, 1);
   }, 'MapRemote removed.');
 }
