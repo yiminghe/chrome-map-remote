@@ -54,7 +54,9 @@ function getRemoteUrl(url, callback) {
       }
       const match = url.match(pattern);
       if (match) {
-        return callback(url.replace(pattern, to));
+        const toUrl = url.replace(pattern, to);
+        console.info(`Rewriting GET ${url} to ${toUrl}`);
+        return callback(toUrl);
       }
     }
 
