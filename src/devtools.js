@@ -52,7 +52,7 @@ function getRemoteUrl(url, callback) {
         //bad pattern
         continue;
       }
-      match = url.match(pattern);
+      const match = url.match(pattern);
       if (match) {
         return callback(url.replace(pattern, to));
       }
