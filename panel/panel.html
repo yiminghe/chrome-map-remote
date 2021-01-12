@@ -62,11 +62,10 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>Enable</th>
+            <th width="20">Enable</th>
             <th>From</th>
             <th>To</th>
-            <th width="80">&nbsp;</th>
-            <th width="80">&nbsp;</th>
+            <th width="220">&nbsp;</th>
         </thead>
         <tbody></tbody>
       </table>
@@ -79,13 +78,13 @@
 <script id="table_row_tpl" type="text/x-javascript-tmpl">
     <tr>
       <td><input class="enable" type="checkbox" data-id="{{id}}"/></td>
-      <td><input class="from" type="text" value="{{from}}"/></td>
-      <td><input class="to" type="text" value="{{to}}"/></td>
+      <td><input class="from" type="text" value="{{from}}" style="calc(100% - 10px)"/></td>
+      <td><input class="to" type="text" value="{{to}}" style="calc(100% - 10px)"/></td>
       <td>
         <button class="remove" value="{{id}}">Delete</button>
-      </td>
-      <td>
         <button class="edit" value="{{id}}">Edit</button>
+        <button class="up" data-id="{{id}}">Up</button>
+        <button class="down" data-id="{{id}}">Down</button>
       </td>
     </tr>
   </script>

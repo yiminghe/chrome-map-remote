@@ -36,49 +36,48 @@ function add() {
     alert('Error: ' + err, 'error');
     return;
   }
-  getRemotes((remotes) => {
+
+  modifyRemotes((remotes) => {
     remotes.push({ from: fromVal, to: toVal, enable: true });
-    setRedirects(remotes);
     $from.val('');
     $to.val('');
-    alert('MapRemote added.');
-  });
-
+  }, 'MapRemote added.');
 }
 
-function remove() {
+function remove(e) {
+  const id = parseInt(e.currentTarget.value);
+  modifyRemotes(() => {
+    remotes.splice(id, 1);
+  }, 'MapRemote removed.');
+}
+
+function modifyRemotes(fn, msg) {
   getRemotes((remotes) => {
     if (!remotes) {
-      // something odd happened, trigger storage update.
       storageUpdate();
       return;
     }
-    remotes.splice(this.value, 1);
+    remotes = fn(remotes) || remotes;
     setRedirects(remotes);
-    alert('MapRemote removed.');
+    alert(msg);
   });
 }
 
 function saveItem(id, v) {
-  getRemotes((remotes) => {
-    if (!remotes) {
-      storageUpdate();
-      return;
-    }
+  modifyRemotes((remotes) => {
     id = parseInt(id);
     const r = remotes[id] = remotes[id] || {};
     Object.assign(r, v);
-    setRedirects(remotes);
-    alert('MapRemote edited.');
-  });
+  }, 'MapRemote edited.');
 }
 
 function editHolder(fromInput, toInput) {
-  return function edit() {
+  return function edit(e) {
+    const id = parseInt(e.currentTarget.value);
     const r = {};
     r.from = fromInput.val().trim();
     r.to = toInput.val().trim();
-    saveItem(this.value, r);
+    saveItem(id, r);
   }
 }
 
@@ -99,13 +98,11 @@ function storageUpdate(remotes3) {
   let remotes;
 
   function doit() {
-    {
-      var $tbody = $('#remotes table tbody');
-      $tbody.html('');
-      $('#remotes').toggle(remotes.length > 0);
-      for (var i = 0; i < remotes.length; i++) {
-        addToTable(i, remotes[i]);
-      }
+    var $tbody = $('#remotes table tbody');
+    $tbody.html('');
+    $('#remotes').toggle(remotes.length > 0);
+    for (var i = 0; i < remotes.length; i++) {
+      addToTable(i, remotes[i]);
     }
   }
 
@@ -133,11 +130,34 @@ function tmpl(id, context) {
 
 function enable(e) {
   const { currentTarget } = e;
-  const id = currentTarget.dataset.id;
+  const id = parseInt(currentTarget.dataset.id);
   const data = {
     enable: currentTarget.checked,
   }
   saveItem(id, data);
+}
+
+function up(e) {
+  const { currentTarget } = e;
+  const id = parseInt(currentTarget.dataset.id);
+  if (id) {
+    const preId = id-1;
+    modifyRemotes((remotes) => {
+      ([remotes[preId], remotes[id]] = [remotes[id], remotes[preId]]);
+    }, 'MapRemote updated.');
+  }
+}
+
+function down(e) {
+  const { currentTarget } = e;
+  const id = parseInt(currentTarget.dataset.id);
+  modifyRemotes((remotes) => {
+    if (id >= remotes.length - 1) {
+      return;
+    }
+    const preId = id+1;
+    ([remotes[preId], remotes[id]] = [remotes[id], remotes[preId]]);
+  }, 'MapRemote updated.');
 }
 
 function addToTable(id, data) {
@@ -146,6 +166,8 @@ function addToTable(id, data) {
     ...data,
   });
   $row.find('input.enable')[0].checked = data.enable;
+  $row.find('button.up').on('click', up);
+  $row.find('button.down').on('click', down);
   $row.find('input.enable').on('change', enable);
   $row.find('button.remove').on('click', remove);
   $row.find('button.edit').on('click', editHolder(
@@ -153,9 +175,7 @@ function addToTable(id, data) {
     $row.find('input.to'))
   );
   $row.appendTo($('#remotes table tbody'));
-
 }
-
 
 $(document).ready(function () {
   $('#add').on('click', add);
