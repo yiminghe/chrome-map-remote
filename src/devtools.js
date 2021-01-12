@@ -1,3 +1,5 @@
+import { VERSION } from './constants';
+
 chrome.devtools.panels.create("MapRemote",
   "",
   "../panel/panel.html",
@@ -33,12 +35,17 @@ async function fetchResource(url, headers, method, postData, success, error) {
 }
 
 function getRemoteUrl(url, callback) {
-  chrome.storage.local.get(['remotes'], (ret) => {
-    var pattern, from, to;
+  chrome.storage.local.get(['remotes', 'version'], (ret) => {
+    if (ret.version !== VERSION) {
+      return callback();
+    }
+    var pattern;
     var remotes = ret.remotes || [];
     for (var i = 0; i < remotes.length; i++) {
-      from = remotes[i][0];
-      to = remotes[i][1];
+      const { from, to, enable } = remotes[i];
+      if (!enable) {
+        continue;
+      }
       try {
         pattern = new RegExp(from, 'ig');
       } catch (err) {

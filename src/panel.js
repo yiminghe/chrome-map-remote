@@ -1,12 +1,19 @@
+import { VERSION } from './constants';
+
 function getRemotes(callback) {
-  chrome.storage.local.get(['remotes'], (r) => {
-    callback(r.remotes || []);
+  chrome.storage.local.get(['remotes', 'version'], (r) => {
+    if (r.version !== VERSION) {
+      callback([]);
+    } else {
+      callback(r.remotes || []);
+    }
   });
 }
 
 function setRedirects(remotes) {
   chrome.storage.local.set({
     remotes,
+    version: VERSION,
   });
 }
 
@@ -30,7 +37,7 @@ function add() {
     return;
   }
   getRemotes((remotes) => {
-    remotes.push([fromVal, toVal]);
+    remotes.push({ from: fromVal, to: toVal, enable: true });
     setRedirects(remotes);
     $from.val('');
     $to.val('');
@@ -52,18 +59,26 @@ function remove() {
   });
 }
 
+function saveItem(id, v) {
+  getRemotes((remotes) => {
+    if (!remotes) {
+      storageUpdate();
+      return;
+    }
+    id = parseInt(id);
+    const r = remotes[id] = remotes[id] || {};
+    Object.assign(r, v);
+    setRedirects(remotes);
+    alert('MapRemote edited.');
+  });
+}
+
 function editHolder(fromInput, toInput) {
   return function edit() {
-    getRemotes((remotes) => {
-      if (!remotes) {
-        storageUpdate();
-        return;
-      }
-      remotes[this.value][0] = fromInput.val().trim();
-      remotes[this.value][1] = toInput.val().trim();
-      setRedirects(remotes);
-      alert('MapRemote edited.');
-    });
+    const r = {};
+    r.from = fromInput.val().trim();
+    r.to = toInput.val().trim();
+    saveItem(this.value, r);
   }
 }
 
@@ -89,7 +104,7 @@ function storageUpdate(remotes3) {
       $tbody.html('');
       $('#remotes').toggle(remotes.length > 0);
       for (var i = 0; i < remotes.length; i++) {
-        addToTable(i, remotes[i][0], remotes[i][1]);
+        addToTable(i, remotes[i]);
       }
     }
   }
@@ -116,19 +131,29 @@ function tmpl(id, context) {
   return $(tmpl);
 }
 
-function addToTable(id, from, to) {
-  var $row = tmpl('table_row_tpl', {
-    'id': id,
-    'from': from,
-    'to': to
-  });
+function enable(e) {
+  const { currentTarget } = e;
+  const id = currentTarget.dataset.id;
+  const data = {
+    enable: currentTarget.checked,
+  }
+  saveItem(id, data);
+}
 
+function addToTable(id, data) {
+  var $row = tmpl('table_row_tpl', {
+    id,
+    ...data,
+  });
+  $row.find('input.enable')[0].checked = data.enable;
+  $row.find('input.enable').on('change', enable);
   $row.find('button.remove').on('click', remove);
   $row.find('button.edit').on('click', editHolder(
     $row.find('input.from'),
     $row.find('input.to'))
   );
   $row.appendTo($('#remotes table tbody'));
+
 }
 
 

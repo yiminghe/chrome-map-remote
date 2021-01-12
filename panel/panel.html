@@ -62,6 +62,7 @@
       <table class="table table-striped">
         <thead>
           <tr>
+            <th>Enable</th>
             <th>From</th>
             <th>To</th>
             <th width="80">&nbsp;</th>
@@ -74,9 +75,10 @@
 </body>
 <script src="jquery.min.js"></script>
 <script src="bootstrap.min.js"></script>
-<script src="panel.js"></script>
+<script src="../dist/panel.js"></script>
 <script id="table_row_tpl" type="text/x-javascript-tmpl">
     <tr>
+      <td><input class="enable" type="checkbox" data-id="{{id}}"/></td>
       <td><input class="from" type="text" value="{{from}}"/></td>
       <td><input class="to" type="text" value="{{to}}"/></td>
       <td>
