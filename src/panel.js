@@ -1,4 +1,4 @@
-import { VERSION } from './constants';
+import { VERSION } from './constants.js';
 
 function getRemotes(callback) {
   chrome.storage.local.get(['remotes', 'version'], (r) => {

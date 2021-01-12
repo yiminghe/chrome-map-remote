@@ -1,4 +1,4 @@
-import { VERSION } from './constants';
+import { VERSION } from './constants.js';
 
 chrome.devtools.panels.create("MapRemote",
   "",
