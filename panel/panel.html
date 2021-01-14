@@ -41,7 +41,8 @@
     <h1>MapRemote</h1>
     <div>
       <button type="button" class="btn" id="start">Start</button>
-      &nbsp; <button type="button" class="btn" id="stop" style="display: none;">Stop</button>
+      &nbsp; <button type="button" class="btn" id="wider" disabled>Wider</button>
+      &nbsp; <button type="button" class="btn" id="narrower" disabled>Narrower</button>
     </div>
     <div id="alert" class="alert fade in alert-success">
       <span class="msg"></span>
@@ -49,14 +50,20 @@
     <hr>
 
     <p>Add a map remote:</p>
-    <form class="form-inline">
-      <fieldset>
-        <input type="text" id="from" placeholder="From" value="">
-        <i class="icon-arrow-right"></i>
-        <input type="text" id="to" placeholder="To" value="">
-        <button type="button" class="btn" id="add">Add</button>
-      </fieldset>
-    </form>
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <th style="border-top: none;background: transparent;">
+            <input
+            style="width:calc(100% - 10px)"
+            type="text" id="from" placeholder="From" value=""></th>
+          <th  style="border-top:none;background:transparent;">
+            <input
+            style="width:calc(100% - 10px)"
+            type="text" id="to" placeholder="To" value=""></th>
+          <th  style="border-top: none;background: transparent;" width="50"><button type="button" class="btn" id="add">Add</button></th>
+      </tbody>
+    </table>
     <div id="remotes">
       <h3>Current map remotes</h3>
       <table class="table table-striped">
@@ -78,8 +85,8 @@
 <script id="table_row_tpl" type="text/x-javascript-tmpl">
     <tr>
       <td><input class="enable" type="checkbox" data-id="{{id}}"/></td>
-      <td><input class="from" type="text" value="{{from}}" style="calc(100% - 10px)"/></td>
-      <td><input class="to" type="text" value="{{to}}" style="calc(100% - 10px)"/></td>
+      <td><input class="from" type="text" value="{{from}}" style="width:calc(100% - 10px)"/></td>
+      <td><input class="to" type="text" value="{{to}}" style="width:calc(100% - 10px)"/></td>
       <td>
         <button class="remove" value="{{id}}">Delete</button>
         <button class="edit" value="{{id}}">Edit</button>

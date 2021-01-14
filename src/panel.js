@@ -141,7 +141,7 @@ function up(e) {
   const { currentTarget } = e;
   const id = parseInt(currentTarget.dataset.id);
   if (id) {
-    const preId = id-1;
+    const preId = id - 1;
     modifyRemotes((remotes) => {
       ([remotes[preId], remotes[id]] = [remotes[id], remotes[preId]]);
     }, 'MapRemote updated.');
@@ -155,7 +155,7 @@ function down(e) {
     if (id >= remotes.length - 1) {
       return;
     }
-    const preId = id+1;
+    const preId = id + 1;
     ([remotes[preId], remotes[id]] = [remotes[id], remotes[preId]]);
   }, 'MapRemote updated.');
 }
@@ -177,30 +177,78 @@ function addToTable(id, data) {
   $row.appendTo($('#remotes table tbody'));
 }
 
-$(document).ready(function () {
-  $('#add').on('click', add);
-  $('#alert').alert();
+let current = 800;
+const list = [800, 1024, 1280];
 
+chrome.storage.local.get(['width'], (r) => {
+  if (r.width) {
+    current = r.width;
+  }
 
-  $('#start').on("click", () => {
-    window.postMessage({
-      action: 'start',
-      source: 'map-remote-debug'
-    }, '*');
-  });
-  $('#stop').on("click", () => {
-    window.postMessage({
-      action: 'stop',
-      source: 'map-remote-debug'
-    }, '*');
-  });
+  $(document).ready(function () {
+    $('#add').on('click', add);
+    $('#alert').alert();
 
+    const content = $('#content')[0];
+    const narrower = $('#narrower')[0];
+    const wider = $('#wider')[0];
 
-  chrome.storage.onChanged.addListener((changes) => {
-    if (changes.remotes) {
-      storageUpdate(changes.remotes.newValue);
+    refreshWidth();
+
+    function refreshWidth() {
+      chrome.storage.local.set({
+        width: current,
+      });
+      content.style.width = `${current}px`;
+      const index = list.findIndex((v) => v === current);
+      if (index === 0) {
+        narrower.disabled = true;
+      } else {
+        narrower.disabled = false;
+      }
+
+      if (index === list.length - 1) {
+        wider.disabled = true;
+      } else {
+        wider.disabled = false;
+      }
     }
+
+    $('#start').on("click", () => {
+      window.postMessage({
+        action: 'start',
+        source: 'map-remote-debug'
+      }, '*');
+    });
+
+    $('#wider').on("click", () => {
+      const index = list.findIndex((v) => v === current);
+      current = list[index + 1];
+      refreshWidth();
+    });
+
+    $('#narrower').on("click", () => {
+      const index = list.findIndex((v) => v === current);
+      current = list[index - 1];
+      refreshWidth();
+    });
+
+    $('#stop').on("click", () => {
+      window.postMessage({
+        action: 'stop',
+        source: 'map-remote-debug'
+      }, '*');
+    });
+
+
+    chrome.storage.onChanged.addListener((changes) => {
+      if (changes.remotes) {
+        storageUpdate(changes.remotes.newValue);
+      }
+    });
+
+    storageUpdate();
   });
 
-  storageUpdate();
 });
+
